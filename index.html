@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>3D Library</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="styles/main.css"
+    />
+    <script src="libs/three.min.js"></script>
+    <script src="scripts/MyCube.js"></script>
+    <script src="scripts/Library.js"></script>
+  </head>
+  <body>
+    <div class="renderer-container" id="renderer-container"></div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const game = new Library();
+        window.game = game; //For debugging only
+      });
+    </script>
+  </body>
+</html>

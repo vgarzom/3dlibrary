@@ -1,0 +1,22 @@
+{
+  "name": "3dlibrary",
+  "version": "1.0.0",
+  "description": "A 3D library using webgl",
+  "main": "index.js",
+  "scripts": {
+    "test": "reload -b"
+  },
+  "keywords": [
+    "webgl",
+    "threejs",
+    "library"
+  ],
+  "author": "Victor Garzón",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.120.1"
+  },
+  "devDependencies": {
+    "reload": "^3.1.0"
+  }
+}
