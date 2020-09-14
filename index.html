@@ -9,15 +9,20 @@
       media="screen"
       href="styles/main.css"
     />
+    <script src="libs/tween.umd.js"></script>
+    <script src="libs/inflate.min.js"></script>
     <script src="libs/three.min.js"></script>
-    <script src="scripts/MyCube.js"></script>
+    <script src="libs/FBXLoader.js"></script>
     <script src="scripts/Library.js"></script>
+    <script src="scripts/Sofa.js"></script>
+    <script src="scripts/MyCube.js"></script>
+    <script src="scripts/Game.js"></script>
   </head>
   <body>
     <div class="renderer-container" id="renderer-container"></div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const game = new Library();
+        const game = new Game();
         window.game = game; //For debugging only
       });
     </script>
