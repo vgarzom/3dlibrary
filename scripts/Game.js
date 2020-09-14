@@ -10,6 +10,7 @@ class Game {
   backgroundColor = 0x006699;
 
   loader = new THREE.FBXLoader();
+  updateTween = false;
 
   constructor() {
     this.initScene();
@@ -25,8 +26,8 @@ class Game {
       1,
       5000
     );
-    this.camera.position.set(0, 100, 400);
-
+    this.camera.position.set(0, 100, -200);
+    this.camera.lookAt(new THREE.Vector3(0, 60, -100));
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(this.backgroundColor);
 
@@ -74,29 +75,45 @@ class Game {
     this.children.push(new Library(this.scene, this.loader));
     this.children.push(new Sofa(this.scene, this.loader));
 
-    let coords = this.camera.position;
-    const tween = new TWEEN.Tween(coords) // Create a new tween that modifies 'coords'.
-      .to({ x: 0, y: 60, z: 0 }, 5000) // Move to (300, 200) in 1 second.
-      .easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
+    console.log('tween now');
+    let start = this.camera.position;
+    
+    let curve = new THREE.CatmullRomCurve3([
+      start,
+      new THREE.Vector3(-200, 60, -100),
+      new THREE.Vector3(0, 60, 0),
+    ]);
+    const lookAt = new THREE.Vector3(0, 60, -100);
+    const points = curve.getPoints(150);
+    let progress = { value: 0 };
+    this.updateTween = true;
+    const tween = new TWEEN.Tween(progress) // Create a new tween that modifies 'coords'.
+      .to({ value: points.length - 1 }, 10000) // Move to (300, 200) in 1 second.
+      //.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
       .onUpdate(() => {
-        
-        this.camera.position.set(coords.x, coords.y, coords.z);
-        //this.camera.lookAt(this.children[0].player.object.position);
+        const point = points[Math.round(progress.value)];
+        this.camera.position.set(point.x, point.y, point.z);
+        this.camera.lookAt(lookAt);
+        console.log("progress", progress);
+        if (progress.value === 1) {
+          console.log("tween stopped");
+          this.updateTween = false;
+        }
       });
 
-    setTimeout(() => {
-      console.log('tween now');
-
-      tween.start(); // Start the tween immediately.
-    }, 3000);
+    tween.start(); // Start the tween immediately.
   }
 
   animate(time) {
     requestAnimationFrame((t) => {
       this.animate(t);
     });
-    TWEEN.update(time);
-    this.children.map((c) => c.animate());
+    if (this.updateTween) {
+      console.log("updating tween");
+      TWEEN.update(time);
+    }
+
+    //this.children.map((c) => c.animate());
     this.renderer.render(this.scene, this.camera);
   }
 }

@@ -14,6 +14,7 @@
   "author": "Victor Garzón",
   "license": "ISC",
   "dependencies": {
+    "curve": "^0.1.1",
     "three": "^0.120.1"
   },
   "devDependencies": {
