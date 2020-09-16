@@ -1,12 +1,14 @@
-class Library {
+class Sofa {
   player = {};
   constructor(scene, loader) {
     loader.load(
-      `assets/models/Bookself/Bookself.fbx`,
+      `assets/models/sofa.FBX`,
       (model) => {
-        model.name = 'Library';
-        console.log('model', model);
-        model.position.x = -135;
+        model.name = 'Sofa';
+        console.log('sofa', model);
+        model.position.x = 0;
+        model.position.z = 0;
+
         // const tLoader = new THREE.TextureLoader();
         /*
       tLoader.load(`assets/models/Bookself/Diffuse.png`, (texture) => {
@@ -19,9 +21,9 @@ class Library {
 */
         this.player.object = new THREE.Object3D();
         this.player.object.add(model);
-        console.log("object", this.player.object);
         scene.add(this.player.object);
-        this.player.object.position.z = -100;
+        this.player.object.position.z = 100;
+
         //this.animations.Idle = model.animations[0];
       },
       (p) => {
