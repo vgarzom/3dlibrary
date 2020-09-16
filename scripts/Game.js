@@ -45,6 +45,8 @@ class Game {
     this.renderer.setSize(this.size.width, this.size.height);
     this.renderer.shadowMap.enabled = true;
     this.container.appendChild(this.renderer.domElement);
+
+    
   }
 
   createGround() {
@@ -58,6 +60,17 @@ class Game {
     //ground.receiveShadow = true;
     ground.rotation.x = -Math.PI / 2;
     return ground;
+  }
+
+  createControls() {
+    this.controls = new THREE.OrbitControls(
+      this.camera,
+      this.renderer.domElement
+    );
+    this.controls.target.set(0, 60, -100);
+   //this.controls.
+    //this.camera.lookAt(new THREE.Vector3(0, 60, -100));
+    this.controls.update();
   }
 
   createGrid() {
@@ -95,9 +108,10 @@ class Game {
         this.camera.position.set(point.x, point.y, point.z);
         this.camera.lookAt(lookAt);
         console.log("progress", progress);
-        if (progress.value === 1) {
+        if (progress.value >= points.length - 1) {
           console.log("tween stopped");
           this.updateTween = false;
+          this.createControls();
         }
       });
 
