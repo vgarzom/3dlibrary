@@ -1,6 +1,6 @@
 {
   "name": "3dlibrary",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A 3D library using webgl",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,6 @@
   "author": "Victor Garzón",
   "license": "ISC",
   "dependencies": {
-    "curve": "^0.1.1",
-    "three": "^0.120.1"
   },
   "devDependencies": {
     "reload": "^3.1.0"
