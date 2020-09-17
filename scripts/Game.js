@@ -1,4 +1,12 @@
 class Game {
+  center = new THREE.Vector3(0, 60, -100);
+  orbit = {
+    angle: 57,
+    ratio: 812,
+    speed: 0.005,
+  };
+
+  status = 'starting';
   container = document.getElementById('renderer-container');
   size = {
     width: this.container.clientWidth,
@@ -10,6 +18,7 @@ class Game {
   backgroundColor = 0x006699;
 
   loader = new THREE.FBXLoader();
+  //loaderObj = new OBJLoader();
   updateTween = false;
 
   constructor() {
@@ -26,8 +35,8 @@ class Game {
       1,
       5000
     );
-    this.camera.position.set(0, 100, -200);
-    this.camera.lookAt(new THREE.Vector3(0, 60, -100));
+    this.camera.position.set(-380, 50, -100);
+    this.camera.lookAt(this.center);
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(this.backgroundColor);
 
@@ -45,8 +54,10 @@ class Game {
     this.renderer.setSize(this.size.width, this.size.height);
     this.renderer.shadowMap.enabled = true;
     this.container.appendChild(this.renderer.domElement);
-
-    
+    window.addEventListener('mousedown', () => {
+      console.log('click now');
+      this.nextStatus(true);
+    });
   }
 
   createGround() {
@@ -68,7 +79,8 @@ class Game {
       this.renderer.domElement
     );
     this.controls.target.set(0, 60, -100);
-   //this.controls.
+    this.controls.enableZoom = false;
+    //this.controls.
     //this.camera.lookAt(new THREE.Vector3(0, 60, -100));
     this.controls.update();
   }
@@ -85,49 +97,97 @@ class Game {
     const directional = new THREE.DirectionalLight(0x707070);
     directional.position.set(0, 10, 30);
     this.scene.add(directional);
-    this.children.push(new Library(this.scene, this.loader));
-    this.children.push(new Sofa(this.scene, this.loader));
+    const library = new Library(this.scene, this.loader);
+    this.children.push(library);
 
-    console.log('tween now');
-    let start = this.camera.position;
-    
-    let curve = new THREE.CatmullRomCurve3([
-      start,
-      new THREE.Vector3(-200, 60, -100),
-      new THREE.Vector3(0, 60, 0),
-    ]);
-    const lookAt = new THREE.Vector3(0, 60, -100);
-    const points = curve.getPoints(150);
-    let progress = { value: 0 };
-    this.updateTween = true;
-    const tween = new TWEEN.Tween(progress) // Create a new tween that modifies 'coords'.
-      .to({ value: points.length - 1 }, 10000) // Move to (300, 200) in 1 second.
-      //.easing(TWEEN.Easing.Quadratic.Out) // Use an easing function to make the animation smooth.
-      .onUpdate(() => {
-        const point = points[Math.round(progress.value)];
-        this.camera.position.set(point.x, point.y, point.z);
-        this.camera.lookAt(lookAt);
-        console.log("progress", progress);
-        if (progress.value >= points.length - 1) {
-          console.log("tween stopped");
-          this.updateTween = false;
-          this.createControls();
-        }
-      });
-
-    tween.start(); // Start the tween immediately.
+    //this.createControls(library);
   }
 
   animate(time) {
     requestAnimationFrame((t) => {
       this.animate(t);
     });
-    if (this.updateTween) {
-      console.log("updating tween");
-      TWEEN.update(time);
+    //console.log('updating tween');
+    TWEEN.update(time);
+    if (this.status === 'orbiting') {
+      this.orbit.angle += this.orbit.speed;
+      var position = new THREE.Vector3().copy(this.camera.position);
+      position.x = this.orbit.ratio * Math.cos(this.orbit.angle);
+      position.z = this.orbit.ratio * Math.sin(this.orbit.angle);
+      this.camera.position.set(position.x, position.y, position.z);
+      this.camera.lookAt(this.center);
     }
-
     //this.children.map((c) => c.animate());
     this.renderer.render(this.scene, this.camera);
+  }
+
+  nextStatus(fromClick = false) {
+    switch (this.status) {
+      case 'starting':
+        if (!fromClick) return;
+        this.status = 'start_orbiting';
+        this.initOrbitCam();
+        break;
+      case 'start_orbiting':
+        if (fromClick) return;
+        this.status = 'orbiting';
+        this.initOrbitCam();
+        break;
+      case 'orbiting':
+        if (!fromClick) return;
+        this.status = 'start_looking';
+        this.startLooking();
+        break;
+      default:
+        break;
+    }
+  }
+
+  initOrbitCam() {
+    console.log('init orbit');
+    var position = new THREE.Vector3().copy(this.camera.position);
+
+    var tween = new TWEEN.Tween(position)
+      .to(
+        new THREE.Vector3(
+          this.orbit.ratio * Math.cos(this.orbit.angle),
+          542,
+          this.orbit.ratio * Math.sin(this.orbit.angle)
+        ),
+        5000
+      )
+      .easing(TWEEN.Easing.Back.InOut)
+      .onUpdate(() => {
+        this.camera.position.set(position.x, position.y, position.z);
+        this.camera.lookAt(this.center);
+      })
+      .onComplete(() => {
+        //this.createControls();
+        this.nextStatus();
+      })
+      .start();
+  }
+
+  startLooking() {
+    console.log('init orbit');
+    var position = new THREE.Vector3().copy(this.camera.position);
+
+    var tween = new TWEEN.Tween(position)
+      .to(
+        new THREE.Vector3(
+          0,60,0
+        ),
+        5000
+      )
+      .easing(TWEEN.Easing.Back.InOut)
+      .onUpdate(() => {
+        this.camera.position.set(position.x, position.y, position.z);
+        this.camera.lookAt(this.center);
+      })
+      .onComplete(() => {
+        this.createControls();
+        this.nextStatus();
+      })
+      .start();
   }
 }

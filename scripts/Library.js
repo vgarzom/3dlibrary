@@ -2,11 +2,12 @@ class Library {
   player = {};
   constructor(scene, loader) {
     loader.load(
-      `assets/models/Bookself/Bookself.fbx`,
+      `assets/models/library_circled.fbx`,
       (model) => {
         model.name = 'Library';
-        console.log('model', model);
-        model.position.x = -135;
+        model.scale.set(50,50,50);
+        //model.position.x = -135;
+       
         // const tLoader = new THREE.TextureLoader();
         /*
       tLoader.load(`assets/models/Bookself/Diffuse.png`, (texture) => {
@@ -21,7 +22,7 @@ class Library {
         this.player.object.add(model);
         console.log("object", this.player.object);
         scene.add(this.player.object);
-        this.player.object.position.z = -100;
+        this.player.object.position.set(-65, 0, -85);
         //this.animations.Idle = model.animations[0];
       },
       (p) => {
